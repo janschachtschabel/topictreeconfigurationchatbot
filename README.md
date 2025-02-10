@@ -143,4 +143,4 @@ Zielgruppen werden auf definierte Rollen gemappt:
 ```
 
 ## Lizenz
-MIT
+Apache 2.0
