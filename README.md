@@ -36,7 +36,7 @@ export const environment = {
   openai: {
     apiKey: 'YOUR_OPENAI_API_KEY',
     baseUrl: 'https://api.openai.com/v1',
-    model: 'gpt-4-1106-preview'
+    model: 'gpt-4o-mini'
   }
 };
 ```
@@ -47,8 +47,7 @@ export const environment = {
 3. Fügen Sie den Schlüssel in Ihre Umgebungsvariablen ein
 
 ### 3. Unterstützte OpenAI Modelle
-- Empfohlen: `gpt-4-1106-preview`
-- Alternativ: `gpt-4`, `gpt-3.5-turbo`
+- Empfohlen: `gpt-4o-mini`
 
 ## Entwicklung
 
