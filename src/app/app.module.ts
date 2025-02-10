@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { ChatAssistantComponent } from './components/chat-assistant/chat-assistant.component';
 import { OpenAIService } from './services/openai.service';
 import { ThemenbaumService } from './services/themenbaum.service';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { ThemenbaumService } from './services/themenbaum.service';
   ],
   providers: [
     OpenAIService,
-    ThemenbaumService
+    ThemenbaumService,
+    provideAnimationsAsync()
   ],
   bootstrap: [AppComponent]
 })

@@ -1,0 +1,57 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# host configuration (currently only dev)
+.env
+
+# compiled output
+/dist
+/tmp
+
+# dependencies
+node_modules
+/bower_components
+
+# IDEs and editors
+/.idea
+/.vscode
+.project
+.classpath
+*.launch
+.settings/
+
+# misc
+/.angular/cache
+/.sass-cache
+/connect.lock
+/coverage/*
+/libpeerconnection.log
+npm-debug.log
+testem.log
+/typings
+.eslintcache
+
+# e2e
+/e2e/*.js
+/e2e/*.map
+
+#System Files
+.DS_Store
+Thumbs.db
+docs/
+
+# edu-sharing
+src/assets/endpoint.txt
+/storybook-static/*
+
+# maven
+node/
+
+# generated sources
+src/app/rest
+
+# Playwright tests
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/playwright/storage/*.json
+/playwright/out
