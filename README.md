@@ -1,4 +1,4 @@
-# Boerdie - KI-Assistent für Themenbaum-Konfiguration
+# KI-Assistent für Themenbaum-Konfiguration
 
 ## Übersicht
 Boerdie ist ein interaktiver KI-Assistent, der Benutzer durch den Prozess der Konfiguration eines strukturierten Themenbaums für Bildungsinhalte führt. Der Assistent ist als Angular-Komponente implementiert und nutzt die OpenAI API für die Verarbeitung natürlicher Sprache.
