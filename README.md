@@ -3,21 +3,23 @@
 ## Übersicht
 Boerdie ist ein interaktiver KI-Assistent, der Benutzer durch den Prozess der Konfiguration eines strukturierten Themenbaums für Bildungsinhalte führt. Der Assistent ist als Angular-Komponente implementiert und nutzt die OpenAI API für die Verarbeitung natürlicher Sprache.
 
-## Funktionen
+## Features
 - 🎯 **Schrittweise Konfiguration** eines Themenbaums mit 3 Hierarchieebenen
-- 🎨 **Dynamischer Status-Indikator** (rot/gelb/grün) für den Fortschritt
+- 🤖 **KI-gestützte Konversation** mit natürlichsprachlicher Interaktion
+- 🎨 **Modernes UI-Design** mit Angular Material
 - 📝 **Markdown-Unterstützung** für formatierte Chat-Nachrichten
-- 🔄 **Sofortige Formular-Updates** nach Bot-Antworten
+- 🔄 **Echtzeit-Formular-Updates** nach Benutzereingaben
 - 🎓 **Bildungsstufen-Integration** mit standardisierten URIs
 - 📚 **Fachgebiete-Mapping** zu offiziellen Taxonomien
 - 👥 **Zielgruppen-Verwaltung** mit definierten Rollen
+- ✨ **Automatische Themenbaumgenerierung** über REST-API
 
 ## Installation
 
 ```bash
 # Repository klonen
 git clone [repository-url]
-cd chat-angular
+cd topictreeconfigurationchatbot
 
 # Abhängigkeiten installieren
 npm install
@@ -34,7 +36,7 @@ export const environment = {
   openai: {
     apiKey: 'YOUR_OPENAI_API_KEY',
     baseUrl: 'https://api.openai.com/v1',
-    model: 'gpt-4-1106-preview' // oder anderes unterstütztes Modell
+    model: 'gpt-4-1106-preview'
   }
 };
 ```
@@ -48,7 +50,7 @@ export const environment = {
 - Empfohlen: `gpt-4-1106-preview`
 - Alternativ: `gpt-4`, `gpt-3.5-turbo`
 
-## Entwicklung und Test
+## Entwicklung
 
 ### Lokaler Entwicklungsserver
 ```bash
@@ -56,7 +58,7 @@ ng serve
 ```
 Navigieren Sie zu `http://localhost:4200/`
 
-### Tests ausführen
+### Tests
 ```bash
 # Unit Tests
 ng test
@@ -65,93 +67,81 @@ ng test
 ng e2e
 ```
 
-## Integration als Web-Komponente
+## REST-API Integration
 
-### 1. Komponente registrieren
-```typescript
-import { createCustomElement } from '@angular/elements';
-import { ChatAssistantComponent } from './components/chat-assistant/chat-assistant.component';
+Der Assistent generiert nach Abschluss der Konfiguration einen API-Aufruf zur Themenbaumgenerierung:
 
-@NgModule({
-  // ...
-})
-export class AppModule {
-  constructor(private injector: Injector) {
-    const chatElement = createCustomElement(ChatAssistantComponent, { injector });
-    customElements.define('boerdie-chat', chatElement);
+### Request
+
+```http
+POST /api/v1/topic-trees/generate
+Content-Type: application/json
+
+{
+  "topic": "string",
+  "mainCategories": number,
+  "subCategories": number,
+  "furtherSubCategories": number,
+  "educationalContexts": string[],
+  "disciplines": string[],
+  "targetGroups": string[]
+}
+```
+
+### Response
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "id": "uuid",
+  "status": "success",
+  "data": {
+    "topic": "string",
+    "mainCategories": number,
+    "subCategories": number,
+    "furtherSubCategories": number,
+    "educationalContexts": string[],
+    "disciplines": string[],
+    "targetGroups": string[],
+    "createdAt": "ISO-8601-date",
+    "uri": "/topic-trees/generated/uuid"
   }
 }
 ```
 
-### 2. In HTML einbinden
-```html
-<boerdie-chat></boerdie-chat>
+## Mappings
+
+### Bildungsstufen
+Die Bildungsstufen werden automatisch auf standardisierte URIs gemappt:
+```typescript
+{
+  "Grundschule": "http://w3id.org/openeduhub/vocabs/educationalContext/grundschule",
+  "Sekundarstufe 1": "http://w3id.org/openeduhub/vocabs/educationalContext/sekundarstufe_1",
+  // ...
+}
 ```
 
-### 3. Build als Web-Komponente
-```bash
-ng build --output-hashing=none --single-bundle true
+### Fachgebiete
+Fachgebiete werden auf offizielle Taxonomien gemappt:
+```typescript
+{
+  "Mathematik": "http://w3id.org/openeduhub/vocabs/discipline/mathematik",
+  "Deutsch": "http://w3id.org/openeduhub/vocabs/discipline/deutsch",
+  // ...
+}
 ```
 
-## API-Integration
-
-### Simulierter API-Aufruf
-Nach Abschluss der Konfiguration generiert der Assistent einen API-Aufruf im folgenden Format:
-
-```bash
-curl -X POST https://api.beispiel.de/themenbaumgenerierung \
-     -H "Content-Type: application/json" \
-     -d '{
-  "thema": "Beispielthema",
-  "hauptkategorien": 5,
-  "unterkategorien": 3,
-  "weitereUnterkategorien": 2,
-  "ccm:educationalcontext": [
-    "http://w3id.org/openeduhub/vocabs/educationalContext/sekundarstufe_1"
-  ],
-  "ccm:taxonid": [
-    "http://w3id.org/openeduhub/vocabs/discipline/380"
-  ],
-  "ccm:educationalintendedenduserrole": [
-    "http://w3id.org/openeduhub/vocabs/lom_intended_end_user_role/teacher"
-  ]
-}'
+### Zielgruppen
+Zielgruppen werden auf definierte Rollen gemappt:
+```typescript
+{
+  "Lehrkraft": "http://w3id.org/openeduhub/vocabs/targetGroup/lehrkraft",
+  "Schüler:in": "http://w3id.org/openeduhub/vocabs/targetGroup/schueler",
+  // ...
+}
 ```
-
-## Komponenten-Struktur
-
-### Chat-Assistant
-- **Hauptkomponente**: `ChatAssistantComponent`
-- **Template**: Chatoberfläche mit Nachrichten und Formular
-- **Services**: 
-  - `OpenAIService`: API-Kommunikation
-  - `ThemenbaumService`: Generierung des API-Aufrufs
-
-### Mappings
-- **Bildungsstufen**: `EDUCATIONAL_CONTEXT_MAPPING`
-- **Fachgebiete**: `DISCIPLINE_MAPPING`
-- **Zielgruppen**: `TARGET_GROUP_MAPPING`
-
-## Status-Indikatoren
-
-- 🔴 **Rot**: Mindestangaben erforderlich
-- 🟡 **Gelb**: Mindestangaben erfüllt
-- 🟢 **Grün**: Konfiguration freigegeben
-
-## Best Practices
-
-### Entwicklung
-- Nutzen Sie TypeScript strict mode
-- Führen Sie regelmäßige Tests durch
-- Halten Sie die Abhängigkeiten aktuell
-
-### Deployment
-- Setzen Sie Umgebungsvariablen korrekt
-- Sichern Sie den API-Schlüssel
-- Aktivieren Sie Produktions-Optimierungen
 
 ## Lizenz
-[Ihre Lizenz hier]
-
-## Support
-[Kontaktinformationen oder Link zum Issue-Tracker]
+MIT

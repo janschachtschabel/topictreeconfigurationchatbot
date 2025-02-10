@@ -1,132 +1,147 @@
 <div class="page-container">
-  <div class="chat-container">
-    <div class="chat-messages">
+  <mat-card class="chat-container">
+    <mat-card-content class="chat-messages no-padding" #chatContainer>
       <div *ngFor="let message of messages" 
            [ngClass]="{'message-bot': message.sender === 'bot', 'message-user': message.sender === 'user'}"
            class="message">
         <div class="message-content" [innerHTML]="formatMessage(message.content)"></div>
       </div>
       <div *ngIf="isLoading" class="message message-bot loading">
-        <div class="typing-indicator">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
+        <mat-spinner diameter="20"></mat-spinner>
       </div>
-    </div>
+    </mat-card-content>
     
-    <div class="chat-input">
-      <input type="text" 
-             [(ngModel)]="userInput" 
-             (keyup.enter)="sendMessage()"
-             placeholder="Schreibe eine Nachricht..." 
-             [disabled]="isLoading">
-      <button (click)="sendMessage()" [disabled]="isLoading || !userInput.trim()">
+    <mat-card-actions class="chat-input">
+      <mat-form-field appearance="outline" class="input-field">
+        <input matInput
+               [(ngModel)]="userInput" 
+               (keyup.enter)="sendMessage()"
+               placeholder="Schreibe eine Nachricht..." 
+               [disabled]="isLoading">
+      </mat-form-field>
+      <button mat-raised-button 
+              color="primary"
+              (click)="sendMessage()" 
+              [disabled]="isLoading || !userInput.trim()">
         <span *ngIf="!isLoading">Senden</span>
-        <span *ngIf="isLoading">...</span>
+        <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
       </button>
-    </div>
+    </mat-card-actions>
+  </mat-card>
 
-    <div class="status-bar" [ngClass]="getStatusClass()">
-      {{getStatusText()}}
-    </div>
-  </div>
-
-  <form [formGroup]="formGroup" class="form-container">
-    <div class="form-content">
-      <div class="form-section">
-        <div class="form-field">
-          <label for="themenbaumthema">Themenbaumthema</label>
-          <input id="themenbaumthema" 
-                 type="text" 
-                 formControlName="themenbaumthema"
-                 class="text-input"
-                 placeholder="Kurzer Titel des Themenbaums">
+  <mat-card class="form-container">
+    <mat-card-content class="no-padding">
+      <div class="form-wrapper">
+        <div class="status-section" [ngClass]="getStatusColor()">
+          <div class="status-content">
+            <mat-icon class="status-icon">{{getStatusIcon()}}</mat-icon>
+            <span class="status-text">{{getStatusText()}}</span>
+          </div>
+          <mat-progress-bar *ngIf="!isFormComplete()"
+                           mode="determinate"
+                           [value]="getProgressValue()"
+                           class="status-progress">
+          </mat-progress-bar>
         </div>
 
-        <div class="categories-row">
-          <div class="form-field compact">
-            <label for="hauptkategorien">Hauptkategorien</label>
-            <input id="hauptkategorien"
-                   type="number"
-                   min="1"
-                   max="30"
-                   formControlName="hauptkategorien"
-                   class="number-input"
-                   placeholder="1-30">
-          </div>
+        <form [formGroup]="formGroup" class="form-content">
+          <div class="form-section">
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>Themenbaumthema</mat-label>
+              <input matInput
+                     id="themenbaumthema" 
+                     formControlName="themenbaumthema"
+                     placeholder="Kurzer Titel des Themenbaums">
+            </mat-form-field>
 
-          <div class="form-field compact">
-            <label for="unterkategorien">Unterkategorien</label>
-            <input id="unterkategorien"
-                   type="number"
-                   min="0"
-                   max="20"
-                   formControlName="unterkategorien"
-                   class="number-input"
-                   placeholder="0-20">
-          </div>
+            <div class="categories-row">
+              <mat-form-field appearance="outline" class="form-field compact">
+                <mat-label>Hauptkategorien</mat-label>
+                <input matInput
+                       type="number"
+                       id="hauptkategorien"
+                       min="1"
+                       max="30"
+                       formControlName="hauptkategorien"
+                       placeholder="1-30">
+              </mat-form-field>
 
-          <div class="form-field compact">
-            <label for="weitereUnterkategorien">Weitere Unterkategorien</label>
-            <input id="weitereUnterkategorien"
-                   type="number"
-                   min="0"
-                   max="20"
-                   formControlName="weitereUnterkategorien"
-                   class="number-input"
-                   placeholder="0-20">
-          </div>
-        </div>
+              <mat-form-field appearance="outline" class="form-field compact">
+                <mat-label>Unterkategorien</mat-label>
+                <input matInput
+                       type="number"
+                       id="unterkategorien"
+                       min="0"
+                       max="20"
+                       formControlName="unterkategorien"
+                       placeholder="0-20">
+              </mat-form-field>
 
-        <div class="metadata-field">
-          <label>Bildungsstufe</label>
-          <div class="metadata-input-row">
-            <select #bildungsstufenSelect class="select-input" (change)="onSelectChange('bildungsstufen', $event)">
-              <option value="">Bitte wählen...</option>
-              <option *ngFor="let stufe of bildungsstufen" [value]="stufe">{{ stufe }}</option>
-            </select>
-            <div class="selected-values" *ngIf="formGroup.get('bildungsstufen')?.value?.length">
-              <span class="value-chip" *ngFor="let stufe of formGroup.get('bildungsstufen')?.value">
-                {{ stufe }}
-                <button class="remove-value" (click)="removeValue('bildungsstufen', stufe)">×</button>
-              </span>
+              <mat-form-field appearance="outline" class="form-field compact">
+                <mat-label>Weitere Unterkategorien</mat-label>
+                <input matInput
+                       type="number"
+                       id="weitereUnterkategorien"
+                       min="0"
+                       max="20"
+                       formControlName="weitereUnterkategorien"
+                       placeholder="0-20">
+              </mat-form-field>
             </div>
-          </div>
-        </div>
 
-        <div class="metadata-field">
-          <label>Fach</label>
-          <div class="metadata-input-row">
-            <select #fachSelect class="select-input" (change)="onSelectChange('fachgebiete', $event)">
-              <option value="">Bitte wählen...</option>
-              <option *ngFor="let fach of fachgebiete" [value]="fach">{{ fach }}</option>
-            </select>
-            <div class="selected-values" *ngIf="formGroup.get('fachgebiete')?.value?.length">
-              <span class="value-chip" *ngFor="let fach of formGroup.get('fachgebiete')?.value">
-                {{ fach }}
-                <button class="remove-value" (click)="removeValue('fachgebiete', fach)">×</button>
-              </span>
-            </div>
-          </div>
-        </div>
+            <mat-form-field appearance="outline" class="metadata-field">
+              <mat-label>Bildungsstufe</mat-label>
+              <mat-select #bildungsstufenSelect (selectionChange)="onSelectChange('bildungsstufen', $event)">
+                <mat-option value="">Bitte wählen...</mat-option>
+                <mat-option *ngFor="let stufe of bildungsstufen" [value]="stufe">{{ stufe }}</mat-option>
+              </mat-select>
+              <mat-chip-grid #chipGrid *ngIf="formGroup.get('bildungsstufen')?.value?.length">
+                <mat-chip-row *ngFor="let stufe of formGroup.get('bildungsstufen')?.value"
+                             (removed)="removeValue('bildungsstufen', stufe)">
+                  {{stufe}}
+                  <button matChipRemove>
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </mat-chip-row>
+              </mat-chip-grid>
+            </mat-form-field>
 
-        <div class="metadata-field">
-          <label>Zielgruppe</label>
-          <div class="metadata-input-row">
-            <select #zielgruppenSelect class="select-input" (change)="onSelectChange('zielgruppen', $event)">
-              <option value="">Bitte wählen...</option>
-              <option *ngFor="let gruppe of zielgruppen" [value]="gruppe">{{ gruppe }}</option>
-            </select>
-            <div class="selected-values" *ngIf="formGroup.get('zielgruppen')?.value?.length">
-              <span class="value-chip" *ngFor="let gruppe of formGroup.get('zielgruppen')?.value">
-                {{ gruppe }}
-                <button class="remove-value" (click)="removeValue('zielgruppen', gruppe)">×</button>
-              </span>
-            </div>
+            <mat-form-field appearance="outline" class="metadata-field">
+              <mat-label>Fach</mat-label>
+              <mat-select #fachSelect (selectionChange)="onSelectChange('fachgebiete', $event)">
+                <mat-option value="">Bitte wählen...</mat-option>
+                <mat-option *ngFor="let fach of fachgebiete" [value]="fach">{{ fach }}</mat-option>
+              </mat-select>
+              <mat-chip-grid #chipGrid *ngIf="formGroup.get('fachgebiete')?.value?.length">
+                <mat-chip-row *ngFor="let fach of formGroup.get('fachgebiete')?.value"
+                             (removed)="removeValue('fachgebiete', fach)">
+                  {{fach}}
+                  <button matChipRemove>
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </mat-chip-row>
+              </mat-chip-grid>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="metadata-field">
+              <mat-label>Zielgruppe</mat-label>
+              <mat-select #zielgruppenSelect (selectionChange)="onSelectChange('zielgruppen', $event)">
+                <mat-option value="">Bitte wählen...</mat-option>
+                <mat-option *ngFor="let gruppe of zielgruppen" [value]="gruppe">{{ gruppe }}</mat-option>
+              </mat-select>
+              <mat-chip-grid #chipGrid *ngIf="formGroup.get('zielgruppen')?.value?.length">
+                <mat-chip-row *ngFor="let gruppe of formGroup.get('zielgruppen')?.value"
+                             (removed)="removeValue('zielgruppen', gruppe)">
+                  {{gruppe}}
+                  <button matChipRemove>
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </mat-chip-row>
+              </mat-chip-grid>
+            </mat-form-field>
           </div>
-        </div>
+        </form>
       </div>
-    </div>
-  </form>
+    </mat-card-content>
+  </mat-card>
 </div>
